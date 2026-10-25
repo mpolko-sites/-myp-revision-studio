@@ -113,6 +113,10 @@ page=Math.max(0,Math.min(page,items.length-1));items.forEach((x,i)=>x.style.disp
 const nav=document.createElement('div');nav.className='simplePager';nav.innerHTML='<button class="secondary" '+(page===0?'disabled':'')+'>← Previous</button><strong>'+(page+1)+' of '+items.length+'</strong><button '+(page===items.length-1?'disabled':'')+'>Next →</button>';
 nav.children[0].onclick=()=>{page--;paginate();holder.scrollIntoView({block:'start'})};nav.children[2].onclick=()=>{page++;paginate();holder.scrollIntoView({block:'start'})};holder.prepend(nav);
 }
-const observer=new MutationObserver(()=>{clearTimeout(window._simpleTimer);window._simpleTimer=setTimeout(paginate,70)});observer.observe(extra,{subtree:true,childList:true});observer.observe(hub,{subtree:true,childList:true});
+// Update pagination only when the learner changes an activity or diagram.
+// Observing our own pager caused a repeated remove/reinsert loop that broke Next.
+function schedulePage(){setTimeout(paginate,50)}
+document.querySelectorAll('[data-tab],[data-hub]').forEach(b=>b.addEventListener('click',schedulePage));
+
 })();
 </script></body></html>
